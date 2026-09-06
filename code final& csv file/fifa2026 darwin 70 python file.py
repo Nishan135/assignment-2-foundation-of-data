@@ -19,7 +19,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-csv_path = Path("Refree_status FIFA2026.csv")
+csv_path = Path(__file__).resolve().parent / "Refree_status FIFA2026.csv"
+output_dir = Path(__file__).resolve().parent
 df = pd.read_csv(csv_path)
 df.columns = df.columns.str.strip()
 df = df.rename(columns={
@@ -152,7 +153,7 @@ plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
 
 plt.savefig(
-    "figure_1_top_yellow_cards.png",
+    output_dir / "figure_1_top_yellow_cards.png",
     dpi=300,
     bbox_inches="tight"
 )
@@ -180,7 +181,7 @@ plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
 
 plt.savefig(
-    "figure_2_red_cards.png",
+    output_dir / "figure_2_red_cards.png",
     dpi=300,
     bbox_inches="tight"
 )
@@ -207,7 +208,7 @@ plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
 
 plt.savefig(
-    "figure_3_average_yellow_cards.png",
+    output_dir / "figure_3_average_yellow_cards.png",
     dpi=300,
     bbox_inches="tight"
 )
@@ -229,7 +230,7 @@ plt.ylabel("Total Yellow Cards")
 plt.tight_layout()
 
 plt.savefig(
-    "figure_4_games_vs_yellow_cards.png",
+    output_dir / "figure_4_games_vs_yellow_cards.png",
     dpi=300,
     bbox_inches="tight"
 )
@@ -239,7 +240,7 @@ plt.show()
 # saving the final dataset with calculated averages to a CSV file
 
 df.to_csv(
-    "referee_analysis_results.csv",
+    output_dir / "referee_analysis_results.csv",
     index=False
 )
 
