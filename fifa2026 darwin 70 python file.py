@@ -360,6 +360,157 @@ print("Figures saved as PNG files.")
 
 
 #Aryan section
+# ==========================================
+# WORLD CUP 2026 SHOTS ON TARGET by Team ANALYSIS
+# ==========================================
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from pathlib import Path
+
+
+# ==========================================
+# 1. LOAD DATASET
+# ==========================================
+
+# Get the folder where this Python script is located
+folder = Path(__file__).parent
+
+# CSV file path
+csv_file = folder / "world_cup_2026_shots.csv"
+
+# Load dataset
+df = pd.read_csv(csv_file)
+
+
+# ==========================================
+# 2. DISPLAY DATASET INFORMATION
+# ==========================================
+
+print("\nFIRST 5 ROWS:")
+print(df.head())
+
+print("\nDataset shape:", df.shape)
+
+print("\nColumn names:")
+print(df.columns.tolist())
+
+print("\nData types:")
+print(df.dtypes)
+
+print("\nMissing values:")
+print(df.isnull().sum())
+
+
+# ==========================================
+# 3. DESCRIPTIVE STATISTICS
+# ==========================================
+
+print("\nDESCRIPTIVE STATISTICS:")
+print(df.describe())
+
+
+# ==========================================
+# 4. TOP 10 TEAMS BY TOTAL SHOTS ON TARGET
+# ==========================================
+
+top_10_ts = df.sort_values(by="TS", ascending=False).head(10)
+
+print("\nTOP 10 TEAMS BY TOTAL SHOTS ON TARGET:")
+print(top_10_ts[["Team", "TS"]])
+
+
+# ==========================================
+# 5. TOP 10 TEAMS BY AVERAGE SHOTS ON TARGET
+# ==========================================
+
+top_10_av = df.sort_values(by="AV", ascending=False).head(10)
+
+print("\nTOP 10 TEAMS BY AVERAGE SHOTS ON TARGET:")
+print(top_10_av[["Team", "AV"]])
+
+
+# ==========================================
+# 6. TEAM WITH HIGHEST AVERAGE
+# ==========================================
+
+highest_average = df.loc[df["AV"].idxmax()]
+
+print("\nTEAM WITH HIGHEST AVERAGE SHOTS ON TARGET:")
+print(highest_average)
+
+
+# ==========================================
+# 7. VISUALIZATION - TOP 10 BY TOTAL SHOTS
+# ==========================================
+
+plt.figure(figsize=(12, 6))
+
+plt.bar(top_10_ts["Team"], top_10_ts["TS"])
+
+plt.title("Top 10 Teams by Total Shots on Target")
+plt.xlabel("Team")
+plt.ylabel("Total Shots on Target (TS)")
+
+plt.xticks(rotation=45)
+
+plt.tight_layout()
+
+plt.show()
+
+
+# ==========================================
+# 8. VISUALIZATION - TOP 10 BY AVERAGE SHOTS
+# ==========================================
+
+plt.figure(figsize=(12, 6))
+
+plt.bar(top_10_av["Team"], top_10_av["AV"])
+
+plt.title("Top 10 Teams by Average Shots on Target")
+plt.xlabel("Team")
+plt.ylabel("Average Shots on Target (AV)")
+
+plt.xticks(rotation=45)
+
+plt.tight_layout()
+
+plt.show()
+
+
+# ==========================================
+# 9. RELATIONSHIP BETWEEN GAMES AND SHOTS
+# ==========================================
+
+plt.figure(figsize=(10, 6))
+
+plt.scatter(df["G"], df["TS"])
+
+plt.title("Games Played vs Total Shots on Target")
+plt.xlabel("Games Played (G)")
+plt.ylabel("Total Shots on Target (TS)")
+
+plt.grid()
+
+plt.tight_layout()
+
+plt.show()
+
+
+# ==========================================
+# 10. CORRELATION ANALYSIS
+# ==========================================
+
+print("\nCORRELATION MATRIX:")
+
+print(df[["G", "TS", "AV"]].corr())
+
+
+# ==========================================
+# END OF ANALYSIS
+# ==========================================
+
+print("\nAnalysis completed successfully!")
 
 
 
