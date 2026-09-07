@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 from scipy import stats
+from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -9,7 +10,8 @@ import matplotlib.pyplot as plt
 # ---------------------------------------------------------------
 # 1. DATA WRANGLING
 # ---------------------------------------------------------------
-df = pd.read_csv("wc2026_golden_boot_scorers.csv")
+csv_path = Path(__file__).resolve().parent / "wc2026_golden_boot_scorers.csv"
+df = pd.read_csv(csv_path)
 # Derived variable: scoring efficiency
 df["minutes_per_goal"] = df["minutes_played"] / df["goals"]
 
@@ -114,7 +116,8 @@ axes[1].set_ylabel("Goals scored")
 axes[1].set_title("Goals scored: semi-finalist vs other teams")
 
 plt.tight_layout()
-plt.savefig("wc2026_golden_boot_analysis.png", dpi=150)
+golden_boot_chart = Path(__file__).resolve().parent / "wc2026_golden_boot_analysis.png"
+plt.savefig(golden_boot_chart, dpi=150)
 print("\nSaved chart to wc2026_golden_boot_analysis.png")
 
 
