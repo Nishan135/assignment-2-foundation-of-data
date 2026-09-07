@@ -7,9 +7,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-# ---------------------------------------------------------------
+
 # 1. DATA WRANGLING
-# ---------------------------------------------------------------
 csv_path = Path(__file__).resolve().parent / "wc2026_golden_boot_scorers.csv"
 df = pd.read_csv(csv_path)
 # Derived variable: scoring efficiency
@@ -26,9 +25,8 @@ print(df.to_string(index=False))
 group_semi = df.loc[df["semifinalist_team"], "goals"]
 group_non_semi = df.loc[~df["semifinalist_team"], "goals"]
 
-# ---------------------------------------------------------------
 # 2. DESCRIPTIVE STATISTICS
-# ---------------------------------------------------------------
+
 def describe(series, label):
     print(f"\n--- Descriptive statistics: {label} (n={len(series)}) ---")
     print(f"Mean goals   : {series.mean():.2f}")
@@ -47,9 +45,8 @@ describe(group_non_semi, "Players from non-semi-finalist teams")
 print("\n--- Minutes-per-goal (efficiency), whole sample ---")
 print(df["minutes_per_goal"].describe().round(2))
 
-# ---------------------------------------------------------------
 # 3. CONFIDENCE INTERVAL (95%) FOR MEAN GOALS - WHOLE SAMPLE
-# ---------------------------------------------------------------
+
 n = len(df)
 mean_goals = df["goals"].mean()
 sem_goals = stats.sem(df["goals"])  # standard error of the mean
@@ -67,9 +64,8 @@ print("Interpretation: we are 95% confident the true mean number of goals")
 print("scored by a member of the WC2026 'leading scorers' population lies")
 print(f"between {ci_low:.2f} and {ci_high:.2f} goals.")
 
-# ---------------------------------------------------------------
 # 4. TWO-SAMPLE T-TEST (Welch, unequal variances)
-# ---------------------------------------------------------------
+
 t_stat, p_val = stats.ttest_ind(group_semi, group_non_semi, equal_var=False)
 
 print("\n" + "=" * 70)
@@ -98,9 +94,9 @@ print("=" * 70)
 print(f"{winner['player']} ({winner['team']}) - {winner['goals']} goals, "
       f"{winner['assists']} assists in {winner['appearances']} appearances")
 
-# ---------------------------------------------------------------
+
 # 5. VISUALISATION
-# ---------------------------------------------------------------
+
 fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
 # Bar chart of top scorers
@@ -120,21 +116,7 @@ golden_boot_chart = Path(__file__).resolve().parent / "wc2026_golden_boot_analys
 plt.savefig(golden_boot_chart, dpi=150)
 print("\nSaved chart to wc2026_golden_boot_analysis.png")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 #bhuwan part
-
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
