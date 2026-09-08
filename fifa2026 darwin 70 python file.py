@@ -397,19 +397,12 @@ print(df.dtypes)
 print("\nMissing values:")
 print(df.isnull().sum())
 
-
-# ==========================================
 # 3. DESCRIPTIVE STATISTICS
-# ==========================================
 
 print("\nDESCRIPTIVE STATISTICS:")
 print(df.describe())
 
-
-
 # 4. TOP 10 TEAMS BY TOTAL SHOTS ON TARGET
-
-
 top_10_ts = df.sort_values(by="TS", ascending=False).head(10)
 
 print("\nTOP 10 TEAMS BY TOTAL SHOTS ON TARGET:")
