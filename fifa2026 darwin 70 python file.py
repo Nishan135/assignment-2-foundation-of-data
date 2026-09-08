@@ -350,22 +350,192 @@ print("\nAnalysis completed successfully.")
 print("Results saved as referee_analysis_results.csv")
 print("Figures saved as PNG files.")
 
+# Aryan Thapa
+# WORLD CUP 2026 SHOTS ON TARGET by Team ANALYSIS
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from pathlib import Path
 
 
+# 1. LOAD DATASET
+
+# Get the folder where this Python script is located
+folder = Path(__file__).parent
+
+# CSV file path
+csv_file = folder / "world_cup_2026_shots.csv"
+
+# Load dataset
+df = pd.read_csv(csv_file)
 
 
+# 2. DATA WRANGLING
+
+# --- Derived variable: shots-per-game sanity check ---
+# AV is supposed to equal TS / G. Recompute it ourselves and flag any rows
+# where the provided AV doesn't match the recomputed value (data-quality
+# check), instead of just trusting the column as-is.
+df["AV_calculated"] = (df["TS"] / df["G"]).round(2)
+df["av_mismatch"] = (df["AV"] - df["AV_calculated"]).abs() > 0.01
+
+n_mismatch = df["av_mismatch"].sum()
+print(f"\nRows where provided AV disagrees with TS/G (recalculated): {n_mismatch}")
+if n_mismatch > 0:
+    print(df.loc[df["av_mismatch"], ["Team", "G", "TS", "AV", "AV_calculated"]])
+
+# --- Derived variable: shot-volume group ---
+# Split teams into "high shot volume" vs "low shot volume" using the
+# median total shots on target as the cutoff. This creates a clean,
+# reusable boolean flag for group comparisons later (descriptive stats,
+# and any two-sample test done elsewhere in the project).
+median_ts = df["TS"].median()
+df["high_shot_volume"] = df["TS"] > median_ts
+
+print(f"\nMedian total shots on target (cutoff for grouping): {median_ts}")
+print(df["high_shot_volume"].value_counts().rename(
+    {True: "High shot volume", False: "Low shot volume"}))
+
+# --- Tidy types ---
+df["Team"] = df["Team"].astype(str).str.strip()
+df["G"] = df["G"].astype(int)
+df["TS"] = df["TS"].astype(int)
+df["AV"] = df["AV"].astype(float)
 
 
+# 3. DISPLAY DATASET INFORMATION
+
+print("\nFIRST 5 ROWS:")
+print(df.head())
+
+print("\nDataset shape:", df.shape)
+
+print("\nColumn names:")
+print(df.columns.tolist())
+
+print("\nData types:")
+print(df.dtypes)
+
+print("\nMissing values:")
+print(df.isnull().sum())
 
 
+# 4. DESCRIPTIVE STATISTICS
+
+def describe(series, label):
+    """Custom descriptive-statistics printout (mirrors df.describe(),
+    but explicit so every statistic is clearly computed and labelled)."""
+    print(f"\n--- Descriptive statistics: {label} (n={len(series)}) ---")
+    print(f"Mean    : {series.mean():.2f}")
+    print(f"Median  : {series.median():.2f}")
+    print(f"Std Dev : {series.std():.2f}")
+    print(f"Min     : {series.min():.2f}")
+    print(f"Max     : {series.max():.2f}")
+    print(f"Q1      : {series.quantile(.25):.2f}")
+    print(f"Q3      : {series.quantile(.75):.2f}")
 
 
+describe(df["G"], "Games played (G)")
+describe(df["TS"], "Total shots on target (TS)")
+describe(df["AV"], "Average shots on target per match (AV)")
+
+# Built-in pandas summary too, for a quick cross-check against the
+# custom function above.
+print("\nDESCRIPTIVE STATISTICS (pandas.describe()):")
+print(df.describe())
+
+# --- Group comparison: high vs low shot-volume teams ---
+group_high = df.loc[df["high_shot_volume"], "AV"]
+group_low = df.loc[~df["high_shot_volume"], "AV"]
+
+describe(group_high, "Average shots on target -- HIGH shot-volume teams")
+describe(group_low, "Average shots on target -- LOW shot-volume teams")
 
 
+# 5. TOP 10 TEAMS BY TOTAL SHOTS ON TARGET
+
+top_10_ts = df.sort_values(by="TS", ascending=False).head(10)
+
+print("\nTOP 10 TEAMS BY TOTAL SHOTS ON TARGET:")
+print(top_10_ts[["Team", "TS"]])
 
 
+# 6. TOP 10 TEAMS BY AVERAGE SHOTS ON TARGET
+
+top_10_av = df.sort_values(by="AV", ascending=False).head(10)
+
+print("\nTOP 10 TEAMS BY AVERAGE SHOTS ON TARGET:")
+print(top_10_av[["Team", "AV"]])
 
 
+# 7. TEAM WITH HIGHEST AVERAGE
 
+highest_average = df.loc[df["AV"].idxmax()]
+
+print("\nTEAM WITH HIGHEST AVERAGE SHOTS ON TARGET:")
+print(highest_average)
+
+
+# 8. VISUALIZATION - TOP 10 BY TOTAL SHOTS
+
+plt.figure(figsize=(12, 6))
+
+plt.bar(top_10_ts["Team"], top_10_ts["TS"])
+
+plt.title("Top 10 Teams by Total Shots on Target")
+plt.xlabel("Team")
+plt.ylabel("Total Shots on Target (TS)")
+
+plt.xticks(rotation=45)
+
+plt.tight_layout()
+
+plt.show()
+
+
+# 9. VISUALIZATION - TOP 10 BY AVERAGE SHOTS
+
+plt.figure(figsize=(12, 6))
+
+plt.bar(top_10_av["Team"], top_10_av["AV"])
+
+plt.title("Top 10 Teams by Average Shots on Target")
+plt.xlabel("Team")
+plt.ylabel("Average Shots on Target (AV)")
+
+plt.xticks(rotation=45)
+
+plt.tight_layout()
+
+plt.show()
+
+
+# 10. RELATIONSHIP BETWEEN GAMES AND SHOTS
+
+plt.figure(figsize=(10, 6))
+
+plt.scatter(df["G"], df["TS"])
+
+plt.title("Games Played vs Total Shots on Target")
+plt.xlabel("Games Played (G)")
+plt.ylabel("Total Shots on Target (TS)")
+
+plt.grid()
+
+plt.tight_layout()
+
+plt.show()
+
+
+# 11. CORRELATION ANALYSIS
+
+print("\nCORRELATION MATRIX:")
+
+print(df[["G", "TS", "AV"]].corr())
+
+
+# END OF ANALYSIS
+
+print("\nAnalysis completed successfully!")
 
 #Bishal section
