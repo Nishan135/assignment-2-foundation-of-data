@@ -1,4 +1,4 @@
-#nishant hamal section
+#nishan hamal section
 import pandas as pd
 import numpy as np
 from scipy import stats
